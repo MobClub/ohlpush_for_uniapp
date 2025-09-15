@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="fcm_fallback_notification_channel_label" translatable="false">Miscellaneous</string>
+	<string name="firebase_database_url" translatable="false">https://mobpushdemo.firebaseio.com</string>
+	<string name="gcm_defaultSenderId" translatable="false">250330963074</string>
+	
+	<string name="google_api_key" translatable="false">AIzaSyCdPCNyFWJTuc5Ozyk68339Eis-N0ffMjA</string>
+	<string name="google_app_id" translatable="false">1:250330963074:android:c5f0a867c065fb8a2ee89b</string>
+	<string name="google_crash_reporting_api_key" translatable="false">AIzaSyCdPCNyFWJTuc5Ozyk68339Eis-N0ffMjA</string>
+	<string name="google_storage_bucket" translatable="false">mobpushdemo.appspot.com</string>
+	<string name="project_id" translatable="false">mobpushdemo</string>
+</resources>

@@ -1,0 +1,153 @@
+import { 
+	SetAPNsForProduction,
+	RegistrationId, 
+	StopPush, 
+	SetAlias, 
+	GetAlias, 
+	DeleteAlias,
+	RestartPush, 
+	IsPushStopped,
+	UniOHLPushCallback,
+	UniOHLPushReceiver,
+	SetUpNotificationConfig, 
+	AddTags, 
+	GetTags, 
+	DeleteTags, 
+	CleanTags, 
+	GetShowBadge, 
+	AddPushReceiver,
+	RegisterDeviceToken,
+	SetupDataNode,
+	SetupUserLanguage
+} from '../interface.uts'
+import { Bool, Int } from 'Swift';
+
+export const setAPNsForProduction: SetAPNsForProduction = function(isPro: boolean): void {
+	let status = isPro ? true : false
+	UniOHLPush.setAPNsForProduction(status)
+}
+
+export const setUpNotificationConfig: SetUpNotificationConfig = function(option: number): void {
+	UniOHLPush.setupNotificationWithType(option.toInt())
+}
+
+export const getRegistrationID : RegistrationId = function(callback : UniOHLPushCallback) {
+	let uniCallBack = new unicallback<String, Int>(callback)
+	UniOHLPush.getRegistrationID((rid: String, code: Int) => {
+		console.log("Rid: " + String(rid))
+		if (code == 0) {
+			uniCallBack.onCallback(rid, code)
+		}
+	})
+}
+
+export const stopPush: StopPush = function() : void {
+	UniOHLPush.stopPush();
+}
+
+export const restartPush: RestartPush = function() : void {
+	UniOHLPush.restartPush();
+}
+
+export const isPushStopped: IsPushStopped = function(callback : UniOHLPushCallback) {
+	let status = UniOHLPush.isPushStoped()
+	let uniCallBack = new unicallback<Bool, Int>(callback)
+	uniCallBack.onCallback(status, 0)
+}
+
+@UTSJS.keepAlive
+export function addPushReceiver(receiver: UniOHLPushReceiver) {
+	UniOHLPush.addObserverToMsg(new unireceiver(receiver))
+}
+
+export const addTags : AddTags = function (tags: string[]): void {
+	UniOHLPush.addTagsToService(tags)
+}
+
+export const getTags : GetTags = function (): void {
+	UniOHLPush.getTagsFromService()
+}
+
+export const deleteTags : DeleteTags = function (tags: string[]): void {
+	UniOHLPush.deleteTagsFromService(tags)
+}
+
+export const cleanTags : CleanTags = function (): void {
+	UniOHLPush.cleanAllTags()
+}
+
+export const setAlias: SetAlias = function(alias : String): void {
+	UniOHLPush.addAliasToService(alias)
+}
+
+export const getAlias: GetAlias = function () : void {
+	UniOHLPush.getAliasFromService()
+}
+
+export const deleteAlias: DeleteAlias = function () : void {
+	UniOHLPush.deleteAliasFromService()
+}
+
+export const getShowBadge : GetShowBadge = function (callback : UniOHLPushCallback) {
+	let block = new unicallback<Int, Int>(callback)
+	UniOHLPush.getServiceBadge((count: Int, code: Int) => {
+		block.onCallback(count, code)
+	})
+}
+
+export const registerDeviceToken: RegisterDeviceToken = function(devToken: String) {
+	UniOHLPush.registerWithDevickToken(devToken)
+}
+
+export const setupDataNode: SetupDataNode = function(node: number) {
+	UniOHLPush.setDataNode(node.toUInt())
+}
+
+export const setupUserLanguage: SetupUserLanguage = function(lan: string) {
+	UniOHLPush.setUserLanguage(lan)
+}
+
+class unicallback<T, Int> {
+	jsCallback : UniOHLPushCallback
+
+	constructor(callback : UniOHLPushCallback) {
+		this.jsCallback = callback
+	}
+
+	onCallback(data : T, code: Int) : void {
+		let result : UTSJSONObject = {
+			"success": (code == 0),
+			"res": data as any,
+			"error": code as any
+		}
+		this.jsCallback.onCallback(result)
+	}
+}
+
+class unireceiver implements UniOHLPushEventReceiver {
+	jsReceiver : UniOHLPushReceiver
+	constructor(receive : UniOHLPushReceiver) {
+		this.jsReceiver = receive
+	}
+	
+	onCustomMessageReceive(msg: string): void {
+		this.jsReceiver.onCustomMessageReceive(msg)
+	}
+	
+	onNotifyMessageReceive(msg: string): void {
+		this.jsReceiver.onNotifyMessageReceive(msg)
+	}
+	
+	onNotifyMessageOpenedReceive(msg: string): void {
+		this.jsReceiver.onNotifyMessageOpenedReceive(msg)
+	}
+	
+	onTagsEventCallBack(tags: string, operation: Int, errorCode: Int): void {
+		this.jsReceiver.onTagsCallback(tags.split(','), Number.from(operation), Number.from(errorCode))
+	}
+	
+	onAliasEventCallBack(alias: string, operation: Int, errorCode: Int): void {
+		this.jsReceiver.onAliasCallback(alias, Number.from(operation), Number.from(errorCode))
+	}
+}
+
