@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+	package="io.dcloud.uni_modules.ohlPushOppo">
+	<application>
+
+		<meta-data android:name="com.ohaola.sdk.push.oppo.appkey" android:value="${Oppo-AppKey}" />
+		<meta-data android:name="com.ohaola.sdk.push.oppo.appsecret" android:value="${Oppo-Appsecret}" />
+		<service android:name="com.ohaola.sdk.push.plugins.oppo.OppoService"
+			android:permission="com.heytap.mcs.permission.SEND_PUSH_MESSAGE" android:exported="true">
+
+			<intent-filter>
+
+				<action android:name="com.heytap.mcs.action.RECEIVE_MCS_MESSAGE" />
+
+				<action android:name="com.heytap.msp.push.RECEIVE_MCS_MESSAGE" />
+			</intent-filter>
+		</service>
+
+		<service android:name="com.ohaola.sdk.push.plugins.oppoCompatibleOppoService"
+			android:permission="com.coloros.mcs.permission.SEND_MCS_MESSAGE" android:exported="true">
+
+			<intent-filter>
+
+				<action android:name="com.coloros.mcs.action.RECEIVE_MCS_MESSAGE" />
+			</intent-filter>
+		</service>
+
+	</application>
+</manifest>

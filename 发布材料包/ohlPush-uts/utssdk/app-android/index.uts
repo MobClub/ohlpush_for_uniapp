@@ -1,106 +1,132 @@
-import { RegistrationId, UniOHLPushCallback, UniOHLPushReceiver, AddPushReceiver, StopPush, RestartPush, IsPushStopped, SetAlias, GetAlias, DeleteAlias, AddTags, GetTags, DeleteTags, CleanTags, SetShowBadge, GetShowBadge, SetSilenceTime } from '../interface.uts'
-import MobPush from 'com.mob.pushsdk.MobPush';
-import MOBPUSH from 'com.mob.commons.MOBPUSH';
-import MobPushCustomMessage from 'com.mob.pushsdk.MobPushCustomMessage';
-import MobPushNotifyMessage from 'com.mob.pushsdk.MobPushNotifyMessage';
-import MobPushReceiver from 'com.mob.pushsdk.MobPushReceiver';
+import {
+	RegistrationId, UniOHLPushCallback, UniOHLPushReceiver, AddPushReceiver, StopPush, RestartPush,
+	IsPushStopped, SetAlias, GetAlias, DeleteAlias, AddTags, GetTags, DeleteTags, CleanTags, SetShowBadge,
+	GetShowBadge, SetSilenceTime, GetDeviceToken, IsNotificationsEnabled, RegisterDeviceToken, SetupUserLanguage
+} from '../interface.uts'
+import OHLPush from 'com.ohaola.sdk.push.OHLPush';
+import OHLPUSH from 'com.ohaola.commons.OHLPUSH';
+import OHLPushCustomMessage from 'com.ohaola.sdk.push.OHLPushCustomMessage';
+import OHLPushNotifyMessage from 'com.ohaola.sdk.push.OHLPushNotifyMessage';
+import OHLPushReceiver from 'com.ohaola.sdk.push.OHLPushReceiver';
 import Context from 'android.content.Context';
 import KotlinArray from 'kotlin.Array';
-import MobPushCallback from 'com.mob.pushsdk.MobPushCallback';
+import OHLPushCallback from 'com.ohaola.sdk.push.OHLPushCallback';
 import MobSDK from 'com.mob.MobSDK'
 import HashonHelper from 'com.mob.tools.utils.HashonHelper';
+import a from 'io.dcloud.h.c.c.b.b.a';
 
 let hasAddChannel = false
 
 export const getRegistrationID : RegistrationId = function (callback : UniOHLPushCallback) {
 	setChannel()
-	MobPush.getRegistrationId(new unicallback<String>(callback))
+	OHLPush.getRegistrationId(new unicallback<String>(callback))
 }
 @UTSJS.keepAlive
-export function addPushReceiver(receiver : UniOHLPushReceiver) {
+export const addPushReceiver : AddPushReceiver = function (receiver : UniOHLPushReceiver) {
 	setChannel()
-	MobPush.addPushReceiver(new unireceiver(receiver))
+	OHLPush.addPushReceiver(new unireceiver(receiver))
 }
 
 export const stopPush : StopPush = function () : void {
 	setChannel()
-	MobPush.stopPush();
+	OHLPush.stopPush();
 }
 
 
 export const restartPush : RestartPush = function () : void {
 	setChannel()
-	MobPush.restartPush();
+	OHLPush.restartPush();
 }
 
 
 export const isPushStopped : IsPushStopped = function (callback : UniOHLPushCallback) {
 	setChannel()
-	MobPush.isPushStopped(new unicallback<Boolean>(callback))
+	OHLPush.isPushStopped(new unicallback<Boolean>(callback))
 }
 
 export const setAlias : SetAlias = function (alias : string) : void {
 	setChannel()
-	MobPush.setAlias(alias)
+	OHLPush.setAlias(alias)
 }
 
 export const getAlias : GetAlias = function () : void {
 	setChannel()
-	MobPush.getAlias()
+	OHLPush.getAlias()
 }
 
 export const deleteAlias : DeleteAlias = function () : void {
 	setChannel()
-	MobPush.deleteAlias()
+	OHLPush.deleteAlias()
 }
 
 
 export const addTags : AddTags = function (tags : string[]) : void {
 	setChannel()
-	MobPush.addTags(tags.toTypedArray())
+	OHLPush.addTags(tags.toTypedArray())
 }
 
 export const getTags : GetTags = function () : void {
 	setChannel()
-	MobPush.getTags()
+	OHLPush.getTags()
 }
 
 export const deleteTags : DeleteTags = function (tags : string[]) : void {
 	setChannel()
-	MobPush.deleteTags(tags.toTypedArray())
+	OHLPush.deleteTags(tags.toTypedArray())
 }
 
 
 export const cleanTags : CleanTags = function () : void {
 	setChannel()
-	MobPush.cleanTags()
+	OHLPush.cleanTags()
 }
 
 export const setShowBadge : SetShowBadge = function (isShow : boolean) : void {
 	setChannel()
-	MobPush.setShowBadge(isShow)
+	OHLPush.setShowBadge(isShow)
 }
 
 export const getShowBadge : GetShowBadge = function (callback : UniOHLPushCallback) {
 	setChannel()
-	MobPush.getShowBadge(new unicallback<Boolean>(callback))
+	OHLPush.getShowBadge(new unicallback<Boolean>(callback))
 }
 
 export const setSilenceTime : SetSilenceTime = function (startHour : Int, startMinute : Int, endHour : Int, endMinute : Int) : void {
 	setChannel()
-	MobPush.setSilenceTime(startHour, startMinute, endHour, endMinute)
+	OHLPush.setSilenceTime(startHour, startMinute, endHour, endMinute)
 }
+
+export const registerDeviceToken : RegisterDeviceToken = function (channel : string, token : string) {
+	setChannel()
+	OHLPush.setDeviceTokenByUser(channel, token)
+}
+
+export const setupUserLanguage : SetupUserLanguage = function (language : string) {
+	setChannel()
+	OHLPush.setUserLanguage(language)
+}
+
+export const getDeviceToken : GetDeviceToken = function (callback : UniOHLPushCallback) {
+	setChannel()
+	OHLPush.getDeviceToken(new unicallback<String>(callback))
+} 
+
+export const isNotificationsEnabled : IsNotificationsEnabled = function (callback : UniOHLPushCallback) {
+	setChannel()
+	OHLPush.isNotificationsEnabled(new unicallback<Boolean>(callback))
+} 
 
 function setChannel() {
 	UTSAndroid.getDispatcher("io").async(function (_) {
-		MobSDK.setChannel(new MOBPUSH(), MobSDK.CHANNEL_UNIAPP);
+		MobSDK.setChannel(new OHLPUSH(), MobSDK.CHANNEL_UNIAPP);
 	}, null)
 }
 
-class unicallback<T> extends MobPushCallback<T> {
+class unicallback<T> extends OHLPushCallback<T> {
 	jsCallback : UniOHLPushCallback
 
 	constructor(callback : UniOHLPushCallback) {
+		super();
 		this.jsCallback = callback
 	}
 
@@ -114,21 +140,22 @@ class unicallback<T> extends MobPushCallback<T> {
 	}
 }
 
-class unireceiver extends MobPushReceiver {
+class unireceiver extends OHLPushReceiver {
 	jsReceiver : UniOHLPushReceiver
 	constructor(receive : UniOHLPushReceiver) {
+		super();
 		this.jsReceiver = receive
 	}
 
-	override  onCustomMessageReceive(context : Context, mobPushCustomMessage : MobPushCustomMessage) : void {
+	override  onCustomMessageReceive(context : Context, mobPushCustomMessage : OHLPushCustomMessage) : void {
 		this.jsReceiver.onCustomMessageReceive(HashonHelper.fromObject(mobPushCustomMessage))
 	}
 
-	override  onNotifyMessageReceive(context : Context, mobPushNotifyMessage : MobPushNotifyMessage) : void {
+	override  onNotifyMessageReceive(context : Context, mobPushNotifyMessage : OHLPushNotifyMessage) : void {
 		this.jsReceiver.onNotifyMessageReceive(HashonHelper.fromObject(mobPushNotifyMessage))
 	}
 
-	override  onNotifyMessageOpenedReceive(context : Context, mobPushNotifyMessage : MobPushNotifyMessage) : void {
+	override  onNotifyMessageOpenedReceive(context : Context, mobPushNotifyMessage : OHLPushNotifyMessage) : void {
 		this.jsReceiver.onNotifyMessageOpenedReceive(HashonHelper.fromObject(mobPushNotifyMessage))
 	}
 
@@ -139,7 +166,10 @@ class unireceiver extends MobPushReceiver {
 		this.jsReceiver.onTagsCallback(Array.fromNative(tags), operation, errorCode)
 	}
 
-	override onAliasCallback(context : Context, alias : String, operation : Int, errorCode : Int) : void {
+	override onAliasCallback(context : Context, alias ?: String, operation : Int, errorCode : Int) : void {
+		if(alias == null){
+			alias = ""
+		}
 		this.jsReceiver.onAliasCallback(alias, operation, errorCode)
 	}
 }

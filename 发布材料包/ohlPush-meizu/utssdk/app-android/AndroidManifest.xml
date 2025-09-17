@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+	package="io.dcloud.uni_modules.ohlPushMeizu">
+	<uses-permission android:name="com.meizu.flyme.push.permission.RECEIVE" />
+	<uses-permission android:name="com.meizu.c2dm.permission.RECEIVE" />
+	<application>
+
+		<receiver android:name="ccom.ohaola.sdk.push.plugins.meizu.PushMeiZuRevicer" android:exported="true">
+			<intent-filter>
+				<action android:name="com.meizu.flyme.push.intent.MESSAGE" />
+				<action android:name="com.meizu.flyme.push.intent.REGISTER.FEEDBACK" />
+				<action android:name="com.meizu.flyme.push.intent.UNREGISTER.FEEDBACK" />
+				<action android:name="com.meizu.c2dm.intent.REGISTRATION" />
+				<action android:name="com.meizu.c2dm.intent.RECEIVE" />
+				<category android:name="${applicationId}" />
+			</intent-filter>
+		</receiver>
+		<meta-data android:name="com.ohaola.sdk.push.meizu.appkey" android:value="${Meizu-AppKey}" />
+		<meta-data android:name="com.ohaola.sdk.push.meizu.appid" android:value="${Meizu-AppId}" />
+
+
+	</application>
+</manifest>
