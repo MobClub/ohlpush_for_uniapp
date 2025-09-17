@@ -18,7 +18,11 @@ import {
 	AddPushReceiver,
 	RegisterDeviceToken,
 	SetupDataNode,
-	SetupUserLanguage
+	SetupUserLanguage,
+	SetShowBadge,
+	SetSilenceTime,
+	GetDeviceToken,
+	IsNotificationsEnabled
 } from '../interface.uts'
 import { Bool, Int } from 'Swift';
 
@@ -95,9 +99,7 @@ export const getShowBadge : GetShowBadge = function (callback : UniOHLPushCallba
 	})
 }
 
-export const registerDeviceToken: RegisterDeviceToken = function(devToken: String) {
-	UniOHLPush.registerWithDevickToken(devToken)
-}
+export const registerDeviceToken: RegisterDeviceToken = function(channel : string, token : string) {}
 
 export const setupDataNode: SetupDataNode = function(node: number) {
 	UniOHLPush.setDataNode(node.toUInt())
@@ -106,6 +108,14 @@ export const setupDataNode: SetupDataNode = function(node: number) {
 export const setupUserLanguage: SetupUserLanguage = function(lan: string) {
 	UniOHLPush.setUserLanguage(lan)
 }
+
+export const setShowBadge: SetShowBadge = function(showBadge: boolean) {}
+
+export const setSilenceTime: SetSilenceTime = function(startHour : Int, startMinute : Int, endHour : Int, endMinute : Int) {}
+
+export const getDeviceToken: GetDeviceToken = function(callback : UniOHLPushCallback) {}
+
+export const isNotificationsEnabled: IsNotificationsEnabled = function(callback : UniOHLPushCallback) {}
 
 class unicallback<T, Int> {
 	jsCallback : UniOHLPushCallback
