@@ -6,17 +6,17 @@ export type UniOHLPushReceiver = {
 	/**
 	 * 自定义消息回调
 	 */
-	onCustomMessageReceive: (message : string) => void,
+	onCustomMessageReceive : (message : string) => void,
 
 	/**
 	 * 通知回调
 	 */
-	onNotifyMessageReceive: (message : string) => void,
+	onNotifyMessageReceive : (message : string) => void,
 
 	/**
 	 * 通知点击回调（当设置了自定义的通知栏显示样式后，将不会收到此事件）
 	 */
-	onNotifyMessageOpenedReceive: (message : string) => void,
+	onNotifyMessageOpenedReceive : (message : string) => void,
 
 	/**
 	 * 获取、设置、删除和清空tags回调
@@ -25,7 +25,7 @@ export type UniOHLPushReceiver = {
 	 * @param operation 操作说明（0 获取， 1 设置， 2 删除，3 清空）
 	 * @param errorCode 操作结果（0 成功，其他失败）
 	 */
-	onTagsCallback: (tags : string[], operation : number, errorCode : number) => void,
+	onTagsCallback : (tags : string[], operation : number, errorCode : number) => void,
 
 	/**
 	 * 获取、设置、删除别名回调
@@ -34,13 +34,13 @@ export type UniOHLPushReceiver = {
 	 * @param operation 操作说明（0 获取， 1 设置， 2 删除）
 	 * @param errorCode 操作结果（0 成功，其他失败）
 	 */
-	onAliasCallback: (alias : string, operation : number, errorCode : number) => void,
+	onAliasCallback : (alias : string, operation : number, errorCode : number) => void,
 }
 
 /* 仅iOS端支持 设置APNs开发环境 */
-export type SetAPNsForProduction = (isPro: boolean) => void;
+export type SetAPNsForProduction = (isPro : boolean) => void;
 /* 仅iOS端支持 配置通知权限 */
-export type SetUpNotificationConfig = (option: number) => void;
+export type SetUpNotificationConfig = (option : number) => void;
 
 /* 获取RegistrationId */
 export type RegistrationId = (callback : UniOHLPushCallback) => void
@@ -82,13 +82,24 @@ export type CleanTags = () => void
 export type GetShowBadge = (callback : UniOHLPushCallback) => void
 
 /* 配置厂商token */
-export type RegisterDeviceToken = (token: string) => void
+export type RegisterDeviceToken = (channel : string, token : string) => void
 
 /* 配置系统语言环境 */
-export type SetupUserLanguage = (lan: string) => void
+export type SetupUserLanguage = (lan : string) => void
 
 /* 仅iOS端支持 配置Push数据节点
    0 海外 1 国内(如需使用海外能力，则需配置为海外节点)
    默认为 0
  */
-export type SetupDataNode = (node: number) => void
+export type SetupDataNode = (node : number) => void
+
+/* 设置角标状态 仅Android */
+export type SetShowBadge = (showBadge : boolean) => void
+
+
+/* 设置静默时间 仅Android */
+export type SetSilenceTime = (startHour : Int, startMinute : Int, endHour : Int, endMinute : Int) => void
+
+export type GetDeviceToken = (callback : UniOHLPushCallback) => void
+
+export type IsNotificationsEnabled = (callback : UniOHLPushCallback) => void

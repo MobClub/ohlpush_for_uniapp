@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+	package="io.dcloud.uni_modules.ohlPushHonor">
+	<application>
+
+		<meta-data android:name="com.hihonor.push.app_id" android:value="${Honor-AppId}" />
+
+		<service android:name="com.ohaola.sdk.push.plugins.honor.HonorPushService" android:exported="false">
+			<intent-filter>
+				<action android:name="com.hihonor.push.action.MESSAGING_EVENT" />
+			</intent-filter>
+		</service>
+
+
+	</application>
+</manifest>

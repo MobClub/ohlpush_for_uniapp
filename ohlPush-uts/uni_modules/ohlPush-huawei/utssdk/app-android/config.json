@@ -1,0 +1,6 @@
+{
+  "minSdkVersion": "21",
+  "dependencies": [
+  		"com.huawei.hms:push:6.12.0.300"
+  	]
+}

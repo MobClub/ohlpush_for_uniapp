@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+	package="io.dcloud.uni_modules.ohlPushHuawei">
+	<application>
+
+		<meta-data android:name="com.huawei.hms.client.appid" android:value="${Huawei-AppId}" />
+		<receiver android:name="com.ohaola.sdk.push.plugins.huawei.PushHaiWeiRevicer" android:exported="true">
+			<intent-filter>
+				<action android:name="com.huawei.android.push.intent.REGISTRATION" />
+				<action android:name="com.huawei.android.push.intent.RECEIVE" />
+				<action android:name="com.huawei.android.push.intent.CLICK" />
+				<action android:name="com.huawei.intent.action.PUSH_STATE" />
+			</intent-filter>
+		</receiver>
+	</application>
+</manifest>

@@ -25,6 +25,9 @@
 					<button v-on:click="unigetShowBadge">getShowBadge</button>
 					<button v-on:click="uniSetUserLan">setUserLan</button>
 					<button v-on:click="unisetSilenceTime">setSilenceTime(Android)</button>
+					<button v-on:click="unisetDeviceTokenByUser">setDeviceTokenByUser(Android)</button>
+					<button v-on:click="unigetDeviceToken">getDeviceToken(Android)</button>
+					<button v-on:click="uniisNotificationsEnabled">isNotificationsEnabled(Android)</button>
 				</scroll-view>
 			</view>
 		</view>
@@ -56,8 +59,36 @@
 		setShowBadge,
 		getShowBadge,
 		setupDataNode,
-		setupUserLanguage
+		setupUserLanguage,
+		registerDeviceToken,
+		getDeviceToken,
+		isNotificationsEnabled
 	} from "@/uni_modules/ohlPush-uts"
+	import {
+		fcmCompileOnly
+	} from "@/uni_modules/ohlPush-fcm";
+	import {
+		honorCompileOnly
+	} from "@/uni_modules/ohlPush-honor";
+	import {
+		huaweiCompileOnly
+	} from "@/uni_modules/ohlPush-huawei";
+	import {
+		meizuCompileOnly
+	} from "@/uni_modules/ohlPush-meizu";
+	import {
+		oppoCompileOnly
+	} from "@/uni_modules/ohlPush-oppo";
+	import {
+		vivoCompileOnly
+	} from "@/uni_modules/ohlPush-vivo";
+	import {
+		xiaomiCompileOnly
+	} from "@/uni_modules/ohlPush-xiaomi";
+	import {
+		amazonCompileOnly
+	} from "@/uni_modules/ohlPush-amazon"
+
 	
 	export default {
 		created: function() {
@@ -78,7 +109,9 @@
 		methods: {
 			unisubmitPolicyGrantResult() {
 				// iOS配置
-				setupDataNode(0)
+				if(uni.getSystemInfoSync().platform == 'ios'){
+					setupDataNode(0)
+				}
 				mobSDKsubmitPolicyGrantResult(true)
 			},
 			configiOSApp() {
@@ -260,7 +293,32 @@
 			uniSetUserLan() {
 				setupUserLanguage("en")
 			},
-		}
+			unisetDeviceTokenByUser(){
+				registerDeviceToken("huawei","testToken")
+			},
+			unigetDeviceToken(){
+				getDeviceToken({
+					onCallback(res) {
+						uni.showToast({
+							title: "getDeviceToken:" + JSON.stringify(res),
+							icon: 'none',
+							duration: 2000
+						})
+					}
+				})
+			},
+			uniisNotificationsEnabled(){
+				isNotificationsEnabled({
+					onCallback(res) {
+						uni.showToast({
+							title: "isNotificationsEnabled:" + JSON.stringify(res),
+							icon: 'none',
+							duration: 2000
+						})
+					}
+				})
+			}
+		}	
 	}
 </script>
 

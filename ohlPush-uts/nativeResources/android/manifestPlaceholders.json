@@ -1,15 +1,15 @@
 {
-	"Mob-AppKey": "2dbe655e88c80",
-	"Mob-AppSecret": "a7b9f1918c596eacbff8a172ba8ed158",
+	"Mob-AppKey": "11d90554ab605e",
+	"Mob-AppSecret": "ecdded75781ee3fdf9cde0f8afa6282f",
 	"Xiaomi-AppId": "2882303761518360245",
 	"Xiaomi-AppKey": "5501836067245",
 	"Vivo-AppKey": "9b01729c-6140-4ad3-ac79-4c4543e12130",
 	"Vivo-AppId": "18568",
-	"Oppo-AppKey": "6303014506164557acc69df6ef14300b",
-	"Oppo-Appsecret": "c850609d8a0f492f8b9eeca1189aaec2",
-	"Meizu-AppKey": "3fc6d1acc7ea4f90a0304967ee3a74ae",
-	"Meizu-AppId": "127372",
-	"Huawei-AppId": "101595257",
-	"Honor-AppId": "220949336"
+	"Oppo-AppKey": "06bcbe07cde84b3391d5f7d59eb894ad",
+	"Oppo-Appsecret": "4085fd5d0fab4fb390fcae63600cea32",
+	"Meizu-AppKey": "9e7a2624bf4b48519312a6db6dbeecbc",
+	"Meizu-AppId": "155987",
+	"Huawei-AppId": "115016075",
+	"Honor-AppId": "104517139"
 
 }
