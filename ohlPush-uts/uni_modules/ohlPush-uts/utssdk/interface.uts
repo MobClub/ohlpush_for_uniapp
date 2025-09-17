@@ -81,7 +81,7 @@ export type CleanTags = () => void
 /* 获取角标状态 */
 export type GetShowBadge = (callback : UniOHLPushCallback) => void
 
-/* 配置厂商token */
+/* 配置厂商token 仅Android */
 export type RegisterDeviceToken = (channel : string, token : string) => void
 
 /* 配置系统语言环境 */
@@ -100,6 +100,8 @@ export type SetShowBadge = (showBadge : boolean) => void
 /* 设置静默时间 仅Android */
 export type SetSilenceTime = (startHour : Int, startMinute : Int, endHour : Int, endMinute : Int) => void
 
+/* 仅Android */
 export type GetDeviceToken = (callback : UniOHLPushCallback) => void
 
+/* 仅Android */
 export type IsNotificationsEnabled = (callback : UniOHLPushCallback) => void
