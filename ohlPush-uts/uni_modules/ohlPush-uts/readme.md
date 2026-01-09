@@ -1,2 +1,1 @@
-# ohlPush-uts
-### 开发文档
+该插件为SDK的UTS实现，具体使用说明请参考MobSDK官网（https://www.mob.com），如遇问题请咨询MobSDK官方技术支持。
