@@ -21,6 +21,8 @@ import ActivityLifecycleCallbacks from 'android.app.Application.ActivityLifecycl
 let hasAddChannel = false
 let uniReceiver : UniOHLPushReceiver | null = null
 let cachedClickEvents : Array<string> = []
+let cachedArrivedEvents : Array<string> = []
+let cachedCustomArrivedEvents : Array<string> = []
 
 export const getRegistrationID : RegistrationId = function (callback : UniOHLPushCallback) {
 	setChannel()
@@ -29,11 +31,23 @@ export const getRegistrationID : RegistrationId = function (callback : UniOHLPus
 @UTSJS.keepAlive
 export function addPushReceiver(receiver : UniOHLPushReceiver) {
 	setChannel()
+	if (cachedArrivedEvents.length > 0) {
+		cachedArrivedEvents.forEach((msg) => {
+			receiver.onNotifyMessageReceive(msg)
+		})
+		cachedArrivedEvents = []
+	}
 	if (cachedClickEvents.length > 0) {
 		cachedClickEvents.forEach((msg) => {
 			receiver.onNotifyMessageOpenedReceive(msg)
 		})
 		cachedClickEvents = []
+	}
+	if (cachedCustomArrivedEvents.length > 0) {
+		cachedCustomArrivedEvents.forEach((msg) => {
+			receiver.onCustomMessageReceive(msg)
+		})
+		cachedCustomArrivedEvents = []
 	}
 	uniReceiver = receiver
 }
@@ -157,16 +171,22 @@ class unicallback<T> implements OHLPushCallback<T> {
 class innerReceiver implements OHLPushReceiver {
 
 	override  onCustomMessageReceive(context : Context, mobPushCustomMessage : OHLPushCustomMessage) : void {
+		let msg = HashonHelper.fromObject(mobPushCustomMessage)
 		const receiver = uniReceiver;
 		if (receiver != null) {
-			receiver.onCustomMessageReceive(HashonHelper.fromObject(mobPushCustomMessage))
+			receiver.onCustomMessageReceive(msg)
+		} else {
+			cachedCustomArrivedEvents(msg)
 		}
 	}
 
 	override  onNotifyMessageReceive(context : Context, mobPushNotifyMessage : OHLPushNotifyMessage) : void {
+		let msg = HashonHelper.fromObject(mobPushNotifyMessage)
 		const receiver = uniReceiver;
 		if (receiver != null) {
-			receiver.onNotifyMessageReceive(HashonHelper.fromObject(mobPushNotifyMessage))
+			receiver.onNotifyMessageReceive(msg)
+		} else {
+			cachedArrivedEvents.push(msg)
 		}
 	}
 
@@ -192,7 +212,7 @@ class innerReceiver implements OHLPushReceiver {
 	}
 
 	override onAliasCallback(context : Context, alias ?: String, operation : Int, errorCode : Int) : void {
-		if(alias == null){
+		if (alias == null) {
 			alias = ""
 		}
 		const receiver = uniReceiver;
@@ -221,11 +241,11 @@ class MyLifecycleCallbacks implements ActivityLifecycleCallbacks {
 	}
 
 	override onActivityStarted(a : Activity) : void {
-
+		OHLPush.parseManufacturerMessage(a.getIntent())
 	}
 
 	override onActivityResumed(a : Activity) : void {
-
+		OHLPush.parseManufacturerMessage(a.getIntent())
 	}
 
 	override onActivityPaused(a : Activity) : void {
