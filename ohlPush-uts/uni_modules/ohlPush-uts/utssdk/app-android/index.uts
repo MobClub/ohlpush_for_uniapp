@@ -176,7 +176,7 @@ class innerReceiver implements OHLPushReceiver {
 		if (receiver != null) {
 			receiver.onCustomMessageReceive(msg)
 		} else {
-			cachedCustomArrivedEvents(msg)
+			cachedCustomArrivedEvents.push(msg)
 		}
 	}
 
