@@ -13,18 +13,43 @@ import KotlinArray from 'kotlin.Array';
 import OHLPushCallback from 'com.ohaola.sdk.push.OHLPushCallback';
 import MobSDK from 'com.mob.MobSDK'
 import HashonHelper from 'com.mob.tools.utils.HashonHelper';
-import a from 'io.dcloud.h.c.c.b.b.a';
+import Application from "android.app.Application";
+import Activity from "android.app.Activity";
+import Bundle from "android.os.Bundle";
+import ActivityLifecycleCallbacks from 'android.app.Application.ActivityLifecycleCallbacks';
 
 let hasAddChannel = false
+let uniReceiver : UniOHLPushReceiver | null = null
+let cachedClickEvents : Array<string> = []
+let cachedArrivedEvents : Array<string> = []
+let cachedCustomArrivedEvents : Array<string> = []
 
 export const getRegistrationID : RegistrationId = function (callback : UniOHLPushCallback) {
 	setChannel()
 	OHLPush.getRegistrationId(new unicallback<String>(callback))
 }
 @UTSJS.keepAlive
-export const addPushReceiver : AddPushReceiver = function (receiver : UniOHLPushReceiver) {
+export function addPushReceiver(receiver : UniOHLPushReceiver) {
 	setChannel()
-	OHLPush.addPushReceiver(new unireceiver(receiver))
+	if (cachedArrivedEvents.length > 0) {
+		cachedArrivedEvents.forEach((msg) => {
+			receiver.onNotifyMessageReceive(msg)
+		})
+		cachedArrivedEvents = []
+	}
+	if (cachedClickEvents.length > 0) {
+		cachedClickEvents.forEach((msg) => {
+			receiver.onNotifyMessageOpenedReceive(msg)
+		})
+		cachedClickEvents = []
+	}
+	if (cachedCustomArrivedEvents.length > 0) {
+		cachedCustomArrivedEvents.forEach((msg) => {
+			receiver.onCustomMessageReceive(msg)
+		})
+		cachedCustomArrivedEvents = []
+	}
+	uniReceiver = receiver
 }
 
 export const stopPush : StopPush = function () : void {
@@ -117,12 +142,15 @@ export const isNotificationsEnabled : IsNotificationsEnabled = function (callbac
 } 
 
 function setChannel() {
-	UTSAndroid.getDispatcher("io").async(function (_) {
-		MobSDK.setChannel(new OHLPUSH(), MobSDK.CHANNEL_UNIAPP);
-	}, null)
+	if (!hasAddChannel) {
+		UTSAndroid.getDispatcher("io").async(function (_) {
+			MobSDK.setChannel(new OHLPUSH(), MobSDK.CHANNEL_UNIAPP);
+		}, null)
+		hasAddChannel = true
+	}
 }
 
-class unicallback<T> extends OHLPushCallback<T> {
+class unicallback<T> implements OHLPushCallback<T> {
 	jsCallback : UniOHLPushCallback
 
 	constructor(callback : UniOHLPushCallback) {
@@ -140,36 +168,100 @@ class unicallback<T> extends OHLPushCallback<T> {
 	}
 }
 
-class unireceiver extends OHLPushReceiver {
-	jsReceiver : UniOHLPushReceiver
-	constructor(receive : UniOHLPushReceiver) {
-		super();
-		this.jsReceiver = receive
-	}
+class innerReceiver implements OHLPushReceiver {
 
 	override  onCustomMessageReceive(context : Context, mobPushCustomMessage : OHLPushCustomMessage) : void {
-		this.jsReceiver.onCustomMessageReceive(HashonHelper.fromObject(mobPushCustomMessage))
+		let msg = HashonHelper.fromObject(mobPushCustomMessage)
+		const receiver = uniReceiver;
+		if (receiver != null) {
+			receiver.onCustomMessageReceive(msg)
+		} else {
+			cachedCustomArrivedEvents.push(msg)
+		}
 	}
 
 	override  onNotifyMessageReceive(context : Context, mobPushNotifyMessage : OHLPushNotifyMessage) : void {
-		this.jsReceiver.onNotifyMessageReceive(HashonHelper.fromObject(mobPushNotifyMessage))
+		let msg = HashonHelper.fromObject(mobPushNotifyMessage)
+		const receiver = uniReceiver;
+		if (receiver != null) {
+			receiver.onNotifyMessageReceive(msg)
+		} else {
+			cachedArrivedEvents.push(msg)
+		}
 	}
 
+
 	override  onNotifyMessageOpenedReceive(context : Context, mobPushNotifyMessage : OHLPushNotifyMessage) : void {
-		this.jsReceiver.onNotifyMessageOpenedReceive(HashonHelper.fromObject(mobPushNotifyMessage))
+		let msg = HashonHelper.fromObject(mobPushNotifyMessage)
+		const receiver = uniReceiver;
+		if (receiver != null) {
+			receiver.onNotifyMessageOpenedReceive(msg)
+		} else {
+			cachedClickEvents.push(msg)
+		}
 	}
 
 	override onTagsCallback(context : Context, tags ?: KotlinArray<string>, operation : Int, errorCode : Int) : void {
 		if (tags == null) {
 			tags = arrayOf("")
 		}
-		this.jsReceiver.onTagsCallback(Array.fromNative(tags), operation, errorCode)
+		const receiver = uniReceiver;
+		if (receiver != null) {
+			receiver.onTagsCallback(Array.fromNative(tags), operation, errorCode)
+		}
 	}
 
 	override onAliasCallback(context : Context, alias ?: String, operation : Int, errorCode : Int) : void {
-		if(alias == null){
+		if (alias == null) {
 			alias = ""
 		}
-		this.jsReceiver.onAliasCallback(alias, operation, errorCode)
+		const receiver = uniReceiver;
+		if (receiver != null) {
+			receiver.onAliasCallback(alias, operation, errorCode)
+		}
 	}
+}
+
+export class AppHookProxy implements UTSAndroidHookProxy {
+	override onCreate(application : Application) {
+		addInnerReceiver(application)
+	}
+}
+
+@UTSJS.keepAlive
+function addInnerReceiver(application : Application) {
+	OHLPush.addPushReceiver(new innerReceiver())
+	application.registerActivityLifecycleCallbacks(new MyLifecycleCallbacks())
+}
+
+
+class MyLifecycleCallbacks implements ActivityLifecycleCallbacks {
+	override onActivityCreated(a : Activity, b : Bundle | null) : void {
+		OHLPush.parseManufacturerMessage(a.getIntent())
+	}
+
+	override onActivityStarted(a : Activity) : void {
+		OHLPush.parseManufacturerMessage(a.getIntent())
+	}
+
+	override onActivityResumed(a : Activity) : void {
+		OHLPush.parseManufacturerMessage(a.getIntent())
+	}
+
+	override onActivityPaused(a : Activity) : void {
+
+	}
+
+	override onActivityStopped(a : Activity) : void {
+
+	}
+
+	override onActivitySaveInstanceState(a : Activity, b : Bundle) : void {
+
+	}
+
+	override onActivityDestroyed(a : Activity) : void {
+
+	}
+
 }
